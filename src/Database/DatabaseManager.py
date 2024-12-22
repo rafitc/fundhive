@@ -69,12 +69,15 @@ class Database:
         finally:
             self.release_connection(connection)
 
-    def execute(self, query: str, *args) -> None:
+    def execute(self, query: str, *args):
         """Execute a query (INSERT/UPDATE/DELETE)."""
         connection = self.get_connection()
         try:
             with connection.cursor() as cursor:
                 cursor.execute(query, args)
                 connection.commit()
+                if cursor.pgresult_ptr is not None:
+                    return cursor.fetchall()
+                return None
         finally:
             self.release_connection(connection)

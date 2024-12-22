@@ -1,21 +1,26 @@
 from pydantic import BaseModel
-from dotenv import load_dotenv
-import os
+from dotenv import dotenv_values
+
+config = dotenv_values(".env")
 
 # Load environment variables from the .env file
-load_dotenv("config/.env")
+class DatabaseSettings(BaseModel):
+    host:str = config['DATABASE_HOST']
+    port:int = config['DATABASE_PORT']
+    user:str = config['DATABASE_USER']
+    password:str = config['DATABASE_USER_PASSWORD']
+    database:str = config['DATABASE_NAME']
+    ssl_mode:str = config['DATABASE_SSL_MODE']
+    client_cert:str = config['DATABASE_CLIENT_CERT']
+    ca_cert:str = config['DATABASE_CA_CERT']
+    client_key:str = config['DATABASE_CLIENT_KEY']
 
-class Settings(BaseModel):
-    database_url: str
-    secret_key: str
 
-    class Config:
-        env_file = ".env"  # Ensure .env file is loaded
-        env_file_encoding = 'utf-8'  # Optional: to specify encoding of the .env file
+class RapidAPISettings(BaseModel):
+    url:str = config['RAPIDAPI_URL']
+    key:str = config['RAPIDAPI_KEY']
+    host:str = config['RAPIDAPI_HOST']
 
-# Create an instance of Settings to access the environment variables
-settings = Settings()
+rapid_api = RapidAPISettings()
+# Rapid API
 
-# Accessing settings
-print(settings.database_url)  # Example usage of the settings object
-print(settings.secret_key)

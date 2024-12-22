@@ -64,7 +64,7 @@ def signinService(db: Database, payload: SigninPayload):
     expiration_time = datetime.utcnow() + timedelta(days=1) # TODO move to config file
 
     token_data = {
-        "sub": user[0]['id'],  # The subject of the token, typically the user identifier
+        "sub": str(user[0]['id']),  # The subject of the token, typically the user identifier
         "exp": expiration_time  # Expiry time
     }
     token = jwt.encode(token_data, "SECRET_KEY", algorithm="HS256") #TODO move the secret key to read from .env

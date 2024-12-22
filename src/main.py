@@ -1,10 +1,13 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI
 import uvicorn
 
 # Import the Logger class from the previous implementation
 from Logger.Logger import Logger
 from utils.generalUtils import generate_request_id, ConnectToDB
-from routes import user, funds
+from routes import user, funds, portfolio
+from config.config import DatabaseSettings
+from fastapi_cache import caches, close_caches
+from fastapi_cache.backends.redis import CACHE_KEY, RedisCacheBackend
 
 # Initialize the logger
 logger = Logger(__name__)
@@ -19,6 +22,7 @@ async def startup():
 # add routers 
 app.include_router(user.router)
 app.include_router(funds.router)
+app.include_router(portfolio.router)
 
 @app.get("/")
 async def read_root(logger=logger):

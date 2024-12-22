@@ -6,7 +6,6 @@ from datetime import datetime
 class JWTBearer(HTTPBearer):
     async def __call__(self, credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
         token = credentials.credentials
-        print(token)
         try:
             # Decode and validate the token
             payload = jwt.decode(token, "SECRET_KEY", algorithms=["HS256"]) # TODO move to config
@@ -14,7 +13,7 @@ class JWTBearer(HTTPBearer):
             if "exp" in payload and datetime.utcfromtimestamp(payload["exp"]) < datetime.now():
                 raise HTTPException(status_code=401, detail="Token has expired")
 
-            return payload  # Return the payload (user information) to the route
+            return payload['sub']  # Return the payload (user information) to the route
 
         except jwt.ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="Token has expired")
