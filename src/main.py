@@ -5,7 +5,7 @@ import uvicorn
 from Logger.Logger import Logger
 from utils.generalUtils import generate_request_id, ConnectToDB
 from routes import user, funds, portfolio
-from config.config import DatabaseSettings
+
 from fastapi_cache import caches, close_caches
 from fastapi_cache.backends.redis import CACHE_KEY, RedisCacheBackend
 

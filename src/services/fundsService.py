@@ -2,6 +2,7 @@ from Database.DatabaseManager import Database
 from fastapi import HTTPException
 from model.fundModel import BuyFundPayload
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_200_OK
+from utils.fundUtils import get_latest_price_from_scheme
 
 from dotenv import dotenv_values
 config = dotenv_values(".env")
@@ -37,7 +38,7 @@ def get_fund_house_scheme(db:Database, fund_house_id):
     
     return fund_house_scheme
 
-def buy_fund_house_scheme(db:Database, payload:BuyFundPayload, user):
+def buy_fund_house_scheme(db:Database, payload:BuyFundPayload, user, ):
     query = f"""select id from portfolios
                 where user_id = {user}; """
     portfolio_id = db.fetch(query)
@@ -51,6 +52,12 @@ def buy_fund_house_scheme(db:Database, payload:BuyFundPayload, user):
     query = "SELECT id from mutual_fund_schemes where scheme_code = %s"
     portfolio = db.fetch(query, payload.scheme_code)
     schema_id = portfolio[0]['id']
+
+    
+    # price calculation 
+    latest_price = get_latest_price_from_scheme()
+    print("Latest price ", latest_price)
+    # fetch latest value and cache it for 1minutes 
 
     # assign to the user
     query = f"""INSERT into portfolio_mutual_funds (portfolio_id, mutual_fund_scheme_id, units, purchase_price) VALUES (
